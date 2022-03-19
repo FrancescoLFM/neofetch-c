@@ -27,3 +27,7 @@ run:
 .PHONY: debug
 debug:
 	gdb -q $(TARGET)
+
+.PHONY: analyze
+analyze:
+	valgrind  --undef-value-errors=no --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ./$(TARGET) $(ARGS)

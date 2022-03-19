@@ -10,6 +10,8 @@
 #define RIGHT               1
 #define MAX_CHARLINE        125
 
+#define ARRAYDIM(array, type) (sizeof(array)/sizeof(type))
+
 struct cpu {
     int cores;
     int frequency;
@@ -21,3 +23,7 @@ struct memory {
     int freemem;
 };
 
+struct strarr {
+    char **array;
+    size_t len;
+};
