@@ -2,15 +2,16 @@ SH = /bin/bash
 CC = gcc
 CFLAGS = -Wall -Wextra
 CFLAGS += -g
+CFLAGS += -I.
 
-OBJ = main.o
+OBJ = main.o src/cpu.o src/utils.o
 TARGET = main
 
 .PHONY: all
 all: $(TARGET)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
