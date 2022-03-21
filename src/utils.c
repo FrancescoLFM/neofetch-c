@@ -124,3 +124,28 @@ char *strstrip(char *s)
 
         return s;
 }
+
+struct time *init_time()
+{
+    struct time *ptr, clk;
+    ptr = &clk;
+
+    ptr->hours = 0;
+    ptr->minutes = 0;
+    ptr->seconds = 0;
+
+    return ptr;
+}
+
+// struct should be initialized with init_time() before calling this fun
+void convert_uptime(struct time *ptr, size_t s)
+{
+    ptr->minutes = s/60;
+
+    if (ptr->minutes) {
+        ptr->seconds -= ptr->minutes*60;
+        ptr->hours = ptr->minutes/60;
+        if (ptr->hours)
+            ptr->minutes -= ptr->hours*60;
+    }
+}

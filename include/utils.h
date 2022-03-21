@@ -11,8 +11,16 @@ struct strarr {
     size_t len;
 };
 
+struct time {
+    unsigned short seconds;
+    unsigned short minutes;
+    unsigned hours;
+};
+
 char *strsel(struct strarr *ptr, size_t n);
 struct strarr *strsplit(char* str, const char *delim);
 struct strarr *read_lines(FILE *fp, int *line_selector, size_t nmemb);
 void free_strarr(struct strarr *ptr);
 char *strstrip(char *s);
+void convert_uptime(struct time *ctime, size_t s);
+struct time *init_time();
