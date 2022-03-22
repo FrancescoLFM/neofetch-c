@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "include/neofetch.h"
-#include "include/cpu.h"
+#include <include/neofetch.h>
+#include <include/cpu.h>
 #include <include/utils.h>
 #include <unistd.h>
 #include <stdlib.h>
