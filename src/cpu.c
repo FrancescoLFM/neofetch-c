@@ -29,13 +29,19 @@ int init_cores(char *cores)
 
 int get_cpuinfo(struct cpu *cpu) 
 {
-    int lines[] = {DEVICENAME_LINE, FREQUENCY_LINE, CORES_LINE, 0};
+    struct strarr *infoptr, info;
+    struct strarr *cpuinfo;
+    char *lines[] = {"model name", "cpu MHz", "cpu cores", NULL};
+    
+    infoptr = &info;
+    infoptr->array = lines;
+    infoptr->len = 4;
 
     FILE *infofp = fopen("/proc/cpuinfo", "r");
     if (infofp == NULL) 
         return -1;
 
-    struct strarr *cpuinfo = read_lines(infofp, lines, ARRAYDIM(lines, int));
+    cpuinfo = read_lines(infofp, infoptr);
     if (cpuinfo == NULL || cpuinfo->array[0] == NULL) { 
         fclose(infofp);
         return -1;

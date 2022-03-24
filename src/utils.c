@@ -62,7 +62,7 @@ char *strsel(struct strarr *ptr, size_t n)
     return str;
 }
 
-struct strarr *read_lines(FILE *fp, int *line_selector, size_t nmemb)
+struct strarr *read_lines(FILE *fp, struct strarr *line_selector)
 {
     struct strarr *lines;
     char buffer[MAX_CHARLINE];
@@ -70,7 +70,7 @@ struct strarr *read_lines(FILE *fp, int *line_selector, size_t nmemb)
     lines = malloc(sizeof(struct strarr));
     if (lines == NULL) 
         return NULL;
-    lines->array = calloc(nmemb, sizeof(char *));
+    lines->array = calloc(line_selector->len, sizeof(char *));
     if (lines->array == NULL) {
         free(lines);
         return NULL;
@@ -79,14 +79,14 @@ struct strarr *read_lines(FILE *fp, int *line_selector, size_t nmemb)
     lines->len = 0;
 
     // Stops when reached eof or there is no more values to be analyzed in line_selector
-    for (int line=0; fgets(buffer, sizeof(buffer), fp) && *line_selector; line++) {
-        if (line == *line_selector) {
+    for (int l=0; fgets(buffer, sizeof(buffer), fp) && *line_selector->array != NULL; l++) {
+        if (!strncmp(buffer, *line_selector->array, strlen(*line_selector->array))) {
             lines->array[lines->len] = strdup(buffer);
             if (lines->array[lines->len] == NULL) {
                 free_strarr(lines);
                 return NULL;
             }
-            line_selector++;
+            line_selector->array++;
             lines->len++;
         }
     }

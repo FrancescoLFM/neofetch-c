@@ -1,7 +1,3 @@
-#define DEVICENAME_LINE     4
-#define FREQUENCY_LINE      7
-#define CORES_LINE          12
-
 #define DEVICENAME          0
 #define FREQUENCY           1
 #define CORES               2
