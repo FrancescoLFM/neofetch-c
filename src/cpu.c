@@ -27,36 +27,44 @@ int init_cores(char *cores)
     return init_frequency(cores);
 }
 
-int get_cpuinfo(struct cpu *cpu) 
+struct strarr *get_cpuinfo() 
 {
-    struct strarr *infoptr, info;
-    struct strarr *cpuinfo;
     char *lines[] = {"model name", "cpu MHz", "cpu cores", NULL};
-    
-    infoptr = &info;
-    infoptr->array = lines;
-    infoptr->len = 4;
+    struct strarr infoptr = {
+        .array = lines,
+        .len = 4
+    };
+    struct strarr *cpuinfo;
 
     FILE *infofp = fopen("/proc/cpuinfo", "r");
     if (infofp == NULL) 
-        return -1;
+        return NULL;
 
-    cpuinfo = read_lines(infofp, infoptr);
+    cpuinfo = read_lines(infofp, &infoptr);
     if (cpuinfo == NULL || cpuinfo->array[0] == NULL) { 
         fclose(infofp);
-        return -1;
+        return NULL;
     }
 
+    fclose(infofp);
+    return cpuinfo;
+}
+
+int init_cpu(struct cpu *ptr)
+{
+    struct strarr *cpuinfo = get_cpuinfo();
+    if (cpuinfo == NULL) {
+        return -1;
+    }
     char *devicename = init_devicename(cpuinfo->array[DEVICENAME]);
     int frequency = init_frequency(cpuinfo->array[FREQUENCY]);
     int cores = init_cores(cpuinfo->array[CORES]);
 
-    cpu->modelname = devicename;
-    cpu->frequency = frequency;
-    cpu->cores = cores;
+    ptr->modelname = devicename;
+    ptr->frequency = frequency;
+    ptr->cores = cores;
 
     free_strarr(cpuinfo);
-    fclose(infofp);
 
     return 0;
 }

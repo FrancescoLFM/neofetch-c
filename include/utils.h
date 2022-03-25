@@ -1,3 +1,6 @@
+#ifndef UTILS_NEOFETCH_H
+#define UTILS_NEOFETCH_H
+
 #include <stdio.h>
 
 #define LEFT                0
@@ -24,3 +27,5 @@ void free_strarr(struct strarr *ptr);
 char *strstrip(char *s);
 void convert_uptime(struct time *ctime, size_t s);
 struct time *init_time();
+
+#endif

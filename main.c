@@ -16,7 +16,7 @@ int main()
 
     system = &sys_info;
 
-    error_flag = get_cpuinfo(processor);
+    error_flag = init_cpu(processor);
     if (!~error_flag) {
         fputs("An error occured trying to get cpu informations\n", stderr);
         return CPU_ERR;
