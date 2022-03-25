@@ -2,6 +2,7 @@
 #include <include/neofetch.h>
 #include <include/cpu.h>
 #include <include/utils.h>
+#include <cpuid.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/sysinfo.h>
@@ -31,9 +32,9 @@ int main()
     usedram = (system->totalram - system->freeram) * system->mem_unit / 1000000;
     system->totalram /= 1000000 * system->mem_unit;
 
-    printf("Uptime:\t\t %d h %d m %d s\nCPU:\t\t%sFrequency:\t %dMHz\nCore number:\t %d\nRAM:\t\t %ldMb/%ldMb\n",
+    printf("Uptime:\t\t %d h %d m %d s\nCPU:\t\t %s\nFrequency:\t %dMHz\nVendor ID:\t %s\nRAM:\t\t %ldMb/%ldMb\n",
            uptime->hours, uptime->minutes, uptime->seconds,
-           processor->modelname, processor->frequency, processor->cores,
+           processor->modelname, processor->frequency, processor->vendor,
            usedram, system->totalram);
 
     free_cpuinfo(processor);

@@ -1,12 +1,32 @@
 #include <include/cpu.h>
 #include <include/utils.h>
 #include <stdlib.h>
+#include <cpuid.h>
+#include <string.h>
 
-char *init_devicename(char *dn)
+char *init_vendor()
 {
-    char *devicename = strsel(strsplit(dn, ":"), RIGHT); // Device name
+    __uint32_t vendor[5];
+    unsigned int a;
 
-    return devicename;
+    __get_cpuid(0, &a, vendor, vendor+2, vendor+1);
+
+    char *ret = strdup((char *) vendor);
+
+    return ret;
+}
+
+char *init_devicename()
+{
+    __uint32_t devicename[12];
+
+    __get_cpuid(0x80000002, devicename, devicename+1, devicename+2, devicename+3);
+    __get_cpuid(0x80000003, devicename+4, devicename+5, devicename+6, devicename+7);
+    __get_cpuid(0x80000004, devicename+8, devicename+9, devicename+10, devicename+11);
+
+    char *ret = strdup((char *) devicename);
+
+    return ret;
 }
 
 int init_frequency(char *freq)
@@ -29,10 +49,10 @@ int init_cores(char *cores)
 
 struct strarr *get_cpuinfo() 
 {
-    char *lines[] = {"model name", "cpu MHz", "cpu cores", NULL};
+    char *lines[] = {"cpu MHz", "cpu cores", NULL};
     struct strarr infoptr = {
         .array = lines,
-        .len = 4
+        .len = 3
     };
     struct strarr *cpuinfo;
 
@@ -56,11 +76,13 @@ int init_cpu(struct cpu *ptr)
     if (cpuinfo == NULL) {
         return -1;
     }
-    char *devicename = init_devicename(cpuinfo->array[DEVICENAME]);
+    char *devicename = init_devicename();
+    char *vendor = init_vendor();
     int frequency = init_frequency(cpuinfo->array[FREQUENCY]);
     int cores = init_cores(cpuinfo->array[CORES]);
 
     ptr->modelname = devicename;
+    ptr->vendor = vendor;
     ptr->frequency = frequency;
     ptr->cores = cores;
 
