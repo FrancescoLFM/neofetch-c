@@ -191,15 +191,15 @@ void convert_uptime(struct time *ptr, size_t s)
 
 char *timetostr(struct time *ptr)
 {
-    char *ret = malloc(16);
+    char str[16];
 
     if (ptr->hours)
-        sprintf(ret, "%u hours, %u mins", ptr->hours, ptr->minutes);
+        sprintf(str, "%u hours, %u mins", ptr->hours, ptr->minutes);
     else if (ptr->minutes)
-        sprintf(ret, "%u mins, %u secs", ptr->minutes, ptr->seconds);
+        sprintf(str, "%u mins, %u secs", ptr->minutes, ptr->seconds);
     else
-        sprintf(ret, "%u secs", ptr->seconds);
-    
-    return ret;
+        sprintf(str, "%u secs", ptr->seconds);
+
+    return strdup(str);
 }
 
