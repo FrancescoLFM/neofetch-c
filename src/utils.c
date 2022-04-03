@@ -62,6 +62,18 @@ char *strsel(struct strarr *ptr, size_t n)
     return str;
 }
 
+char *read_line(FILE *fp, char *word_selector, size_t nmemb)
+{
+    char buffer[MAX_CHARLINE];
+
+    for (int l=0; fgets(buffer, sizeof(buffer), fp); l++) {
+        if (!strncmp(buffer, word_selector, nmemb))
+            return strdup(buffer);
+    }
+
+    return NULL;
+}
+
 struct strarr *read_lines(FILE *fp, struct strarr *line_selector)
 {
     struct strarr *lines;
@@ -103,26 +115,54 @@ void free_strarr(struct strarr *ptr)
     free(ptr);
 }
 
-// from linux kernel
-char *strstrip(char *s) 
+char *strlstrip(char *s, const char *c)
 {
-    size_t size;
-        char *end;
+    uint8_t found = 1;
+    char *ret;
 
-        size = strlen(s);
+    for (; *s && found; s++) {
+        found = 0;
+        for (int i=0; c[i] && !found; i++)
+            found = (c[i] == *s);
+    }
+    
+    // Retrocedi cursore quando incontra un carattere da non strippare
+    if (!found)
+        CURS_ADJ(s);
+    
+    ret = strdup(s);
+    return ret;
+}
 
-        if (!size)
-                return s;
+char *strrstrip(char *s, const char *c) 
+{
+    char *ret = strdup(s);
+    uint8_t found = 1;
 
-        end = s + size - 1;
-        while (end >= s && isspace(*end))
-                end--;
-        *(end + 1) = '\0';
+    for (size_t size = strlen(ret)-1; size && found; size--) {
+        found = 0;
+        for (int i=0; c[i]; i++) {
+            found = (c[i] == ret[size]);
+            if (c[i] == ret[size])
+                ret[size] = '\0';
+        }
+    }
 
-        while (*s && isspace(*s))
-                s++;
+    return ret;
+}
 
-        return s;
+char *strstrip(char *s, const char *c) 
+{
+    char *left, *right;
+    
+    left = strlstrip(s, c);
+
+    if (left) {
+        right = strrstrip(left, c);
+        free(left);
+    }
+
+    return right;
 }
 
 struct time *init_time()
@@ -140,12 +180,26 @@ struct time *init_time()
 // struct should be initialized with init_time() before calling this fun
 void convert_uptime(struct time *ptr, size_t s)
 {
-    ptr->minutes = s/60;
+    int th; // Truncated hours
 
-    if (ptr->minutes) {
-        ptr->seconds -= ptr->minutes*60;
-        ptr->hours = ptr->minutes/60;
-        if (ptr->hours)
-            ptr->minutes -= ptr->hours*60;
-    }
+    ptr->hours = s/3600;
+    th = 3600 * ptr->hours;
+
+    ptr->minutes = (s - th)/60;
+    ptr->seconds = (s - th - (60 * ptr->minutes));
 }
+
+char *timetostr(struct time *ptr)
+{
+    char *ret = malloc(16);
+
+    if (ptr->hours)
+        sprintf(ret, "%u hours, %u mins", ptr->hours, ptr->minutes);
+    else if (ptr->minutes)
+        sprintf(ret, "%u mins, %u secs", ptr->minutes, ptr->seconds);
+    else
+        sprintf(ret, "%u secs", ptr->seconds);
+    
+    return ret;
+}
+

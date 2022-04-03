@@ -9,7 +9,7 @@ char *init_vendor()
     __uint32_t vendor[5];
     unsigned int a;
 
-    __get_cpuid(0, &a, vendor, vendor+2, vendor+1);
+    __get_cpuid(VENDORSTR, &a, vendor, vendor+2, vendor+1);
 
     char *ret = strdup((char *) vendor);
 
@@ -20,9 +20,9 @@ char *init_devicename()
 {
     __uint32_t devicename[12];
 
-    __get_cpuid(0x80000002, devicename, devicename+1, devicename+2, devicename+3);
-    __get_cpuid(0x80000003, devicename+4, devicename+5, devicename+6, devicename+7);
-    __get_cpuid(0x80000004, devicename+8, devicename+9, devicename+10, devicename+11);
+    __get_cpuid(BRANDSTR1, devicename, devicename+1, devicename+2, devicename+3);
+    __get_cpuid(BRANDSTR2, devicename+4, devicename+5, devicename+6, devicename+7);
+    __get_cpuid(BRANDSTR3, devicename+8, devicename+9, devicename+10, devicename+11);
 
     char *ret = strdup((char *) devicename);
 
@@ -93,6 +93,8 @@ int init_cpu(struct cpu *ptr)
 
 void free_cpuinfo(struct cpu *ptr)
 {
+    if (ptr->vendor != NULL)
+        free(ptr->vendor);
     if (ptr->modelname != NULL)
         free(ptr->modelname);
     

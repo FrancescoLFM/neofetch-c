@@ -3,8 +3,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 CFLAGS += -g
 CFLAGS += -I.
+CFLAGS += -Fanalyzer
 
-OBJ = main.o src/cpu.o src/utils.o
+OBJ = main.o src/cpu.o src/utils.o src/distro.o
 TARGET = main
 
 .PHONY: all
@@ -23,7 +24,7 @@ clean:
 
 .PHONY: run
 run:
-	./$(TARGET)
+	@./$(TARGET)
 
 .PHONY: debug
 debug:
