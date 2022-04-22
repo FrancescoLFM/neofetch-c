@@ -6,14 +6,12 @@
 
 char *init_vendor()
 {
-    __uint32_t vendor[5];
+    __uint32_t *vendor = malloc(5 * sizeof(__uint32_t));
     unsigned int a;
 
     __get_cpuid(VENDORSTR, &a, vendor, vendor+2, vendor+1);
 
-    char *ret = strdup((char *) vendor);
-
-    return ret;
+    return (char *) vendor;
 }
 
 char *init_devicename()

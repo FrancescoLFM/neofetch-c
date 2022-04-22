@@ -5,7 +5,7 @@ CFLAGS += -g
 CFLAGS += -I.
 CFLAGS += -Fanalyzer
 
-OBJ = main.o src/cpu.o src/utils.o src/distro.o
+OBJ = main.o src/cpu.o src/utils.o src/distro.o src/neofetch.o
 TARGET = main
 
 .PHONY: all
@@ -32,4 +32,4 @@ debug:
 
 .PHONY: analyze
 analyze:
-	valgrind  --undef-value-errors=no --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ./$(TARGET) $(ARGS)
+	valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ./$(TARGET) $(ARGS)

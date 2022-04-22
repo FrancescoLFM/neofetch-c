@@ -79,16 +79,9 @@ struct strarr *read_lines(FILE *fp, struct strarr *line_selector)
     struct strarr *lines;
     char buffer[MAX_CHARLINE];
 
-    lines = malloc(sizeof(struct strarr));
-    if (lines == NULL) 
+    lines = alloc_sstrarr(line_selector->len);
+    if (lines == NULL)
         return NULL;
-    lines->array = calloc(line_selector->len, sizeof(char *));
-    if (lines->array == NULL) {
-        free(lines);
-        return NULL;
-    }
-
-    lines->len = 0;
 
     // Stops when reached eof or there is no more values to be analyzed in line_selector
     for (int l=0; fgets(buffer, sizeof(buffer), fp) && *line_selector->array != NULL; l++) {
@@ -106,13 +99,52 @@ struct strarr *read_lines(FILE *fp, struct strarr *line_selector)
     return lines;
 }
 
+struct strarr *alloc_strarr(size_t rows, size_t maxlen)
+{
+    struct strarr *lines = alloc_sstrarr(rows);
+    
+    for (size_t i=0; i < rows; ++i) {
+        lines->array[i] = malloc(maxlen * sizeof(char));
+        if (lines->array[i] == NULL) {
+            free_strarr(lines);
+            return NULL; // polizia dei meme
+        }
+        lines->len++;
+    }
+
+    return lines;
+}
+
+struct strarr *alloc_sstrarr(size_t rows)
+{
+    struct strarr *lines;
+    
+    lines = malloc(sizeof(struct strarr));
+    if (lines == NULL) 
+        return NULL;
+    lines->len = 0;
+
+    lines->array = malloc(rows * sizeof(char *));
+    if (lines->array == NULL) {
+        free(lines);
+        return NULL;
+    }
+
+    return lines;
+}
+
 void free_strarr(struct strarr *ptr)
+{
+    free_sstrarr(ptr);
+    free(ptr);
+}
+
+void free_sstrarr(struct strarr *ptr)
 {
     for (size_t i=0; i < ptr->len; i++)
         free(ptr->array[i]);
 
     free(ptr->array);
-    free(ptr);
 }
 
 char *strlstrip(char *s, const char *c)
@@ -153,7 +185,7 @@ char *strrstrip(char *s, const char *c)
 
 char *strstrip(char *s, const char *c) 
 {
-    char *left, *right;
+    char *left, *right = NULL;
     
     left = strlstrip(s, c);
 
@@ -167,8 +199,7 @@ char *strstrip(char *s, const char *c)
 
 struct time *init_time()
 {
-    struct time *ptr, clk;
-    ptr = &clk;
+    struct time *ptr = malloc(sizeof(struct time));
 
     ptr->hours = 0;
     ptr->minutes = 0;
@@ -191,7 +222,7 @@ void convert_uptime(struct time *ptr, size_t s)
 
 char *timetostr(struct time *ptr)
 {
-    char str[16];
+    char *str = malloc(30 * sizeof(char));
 
     if (ptr->hours)
         sprintf(str, "%u hours, %u mins", ptr->hours, ptr->minutes);
@@ -200,6 +231,6 @@ char *timetostr(struct time *ptr)
     else
         sprintf(str, "%u secs", ptr->seconds);
 
-    return strdup(str);
+    return str;
 }
 

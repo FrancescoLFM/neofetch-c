@@ -8,6 +8,7 @@
 #define RIGHT               1
 #define MAX_CHARLINE        125
 
+#define MAX(A, B)           ((A) > (B) ? (A) : (B))
 #define CURS_ADJ(str)       (str--)
 #define ARRAYDIM(array, type) (sizeof(array)/sizeof(type))
 
@@ -25,6 +26,9 @@ struct time {
 char *strsel(struct strarr *ptr, size_t n);
 struct strarr *strsplit(char* str, const char *delim);
 struct strarr *read_lines(FILE *fp, struct strarr *line_selector);
+struct strarr *alloc_strarr(size_t rows, size_t maxlen);
+struct strarr *alloc_sstrarr(size_t rows);
+void free_sstrarr(struct strarr *ptr);
 void free_strarr(struct strarr *ptr);
 char *strstrip(char *s, const char *c);
 void convert_uptime(struct time *ctime, size_t s);
