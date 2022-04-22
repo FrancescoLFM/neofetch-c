@@ -3,6 +3,8 @@
 
 #include <include/utils.h>
 
+#define FINFO_ERR   -6
+#define UPTIME_ERR  -5
 #define DISTRO_ERR  -4
 #define OS_ERR      -3
 #define SYS_ERR     -2

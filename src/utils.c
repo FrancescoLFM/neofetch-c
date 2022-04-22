@@ -104,7 +104,7 @@ struct strarr *alloc_strarr(size_t rows, size_t maxlen)
     struct strarr *lines = alloc_sstrarr(rows);
     
     for (size_t i=0; i < rows; ++i) {
-        lines->array[i] = malloc(maxlen * sizeof(char));
+        lines->array[i] = calloc(maxlen, sizeof(char));
         if (lines->array[i] == NULL) {
             free_strarr(lines);
             return NULL; // polizia dei meme
@@ -208,8 +208,24 @@ struct time *init_time()
     return ptr;
 }
 
+char *init_uptimestr(long sys_uptime)
+{
+    struct time *uptime;
+    char *uptimestr;
+
+    uptime = init_time();
+    if (!uptime)
+        return NULL;
+    
+    convert_uptime(uptime, sys_uptime);
+    uptimestr = timetostr(uptime);
+    free(uptime);
+
+    return uptimestr;
+}
+
 // struct should be initialized with init_time() before calling this fun
-void convert_uptime(struct time *ptr, size_t s)
+void convert_uptime(struct time *ptr, long s)
 {
     int th; // Truncated hours
 
@@ -223,6 +239,8 @@ void convert_uptime(struct time *ptr, size_t s)
 char *timetostr(struct time *ptr)
 {
     char *str = malloc(30 * sizeof(char));
+    if (!str)
+        return NULL;
 
     if (ptr->hours)
         sprintf(str, "%u hours, %u mins", ptr->hours, ptr->minutes);
