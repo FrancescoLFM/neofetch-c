@@ -8,6 +8,7 @@ int fetch_distrodraw(char *distroname, struct strarr **distrodraw)
     FILE *infile;
     uint8_t done = 0;
     size_t size = strlen(distroname);
+
     char *filename = malloc(size + 15);
     if (filename == NULL)
         return -1;
@@ -59,5 +60,6 @@ char *get_distro()
 
         return distroname;
     }
+    
     return NULL;
 }

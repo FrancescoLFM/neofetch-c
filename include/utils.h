@@ -25,15 +25,20 @@ struct time {
 
 char *strsel(struct strarr *ptr, size_t n);
 struct strarr *strsplit(char* str, const char *delim);
+char *strstrip(char *s, const char *c);
+
 struct strarr *read_lines(FILE *fp, struct strarr *line_selector);
+char *read_line(FILE *fp, char *word_selector, size_t nmemb);
+
 struct strarr *alloc_strarr(size_t rows, size_t maxlen);
 struct strarr *alloc_sstrarr(size_t rows);
 void free_sstrarr(struct strarr *ptr);
 void free_strarr(struct strarr *ptr);
-char *strstrip(char *s, const char *c);
-void convert_uptime(struct time *ctime, size_t s);
+
+void convert_uptime(struct time *ctime, long s);
 struct time *init_time();
-char *read_line(FILE *fp, char *word_selector, size_t nmemb);
+char *init_uptimestr(long sys_uptime);
+
 char *timetostr(struct time *ptr);
 
 #endif
